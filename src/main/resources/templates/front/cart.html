@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/front/common/header::head('宠物主页')"></head>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+    <div class="banner two">
+        <div class="container">
+            <div class="pag-nav">
+                <ul class="p-list">
+                    <li><a href="/">主页</a></li> &nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span>购物车</span>详情</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+    <div id="cart">
+        <div class="banner_x center">
+
+            <div class="wdgwc fl ml20">购物车</div>
+            <div class="wxts fl ml20">温馨提示：产品是否购买成功，以最终下单为准哦，请尽快结算</div>
+            <div class="clear"></div>
+        </div>
+        <div class="cart_line"></div>
+        <div class="cart_bg">
+            <div class="mt-20" style="padding:0 5%;" id="list"></div>
+            <div class="pre_order mt20 center">
+                <div class="tips fl ml20">
+                    <ul>
+                        <li><a th:href="@{/}">继续购物</a></li>
+                        <li>|</li>
+                        <li>共<span th:text="${session.shopcart}">0</span>件商品</li>
+                        <div class="clear"></div>
+                    </ul>
+                </div>
+                <div class="order_div fr">
+                    <div style="float: left" id="span"></div>
+                    <div class="order_button fr">
+                        <th:block th:if="${session.shopcart == 0}">
+                            <input class="order_button_c" type="button" name="tip"
+                                   disabled="disabled"
+                                   value="去结算"/>
+                        </th:block>
+                        <th:block th:unless="${session.shopcart == 0}">
+                            <input class="order_button_d" type="button" name="clearShop"
+                                   onclick="clearShop()"
+                                   value="清空"/>
+                            <input class="order_button_d" type="button" name="settle"
+                                   onclick="settle()"
+                                   value="去结算"/>
+                        </th:block>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="/front/common/footer::footer"></div>
+<link href="/front/css/cart.css" rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="/front/js/layer.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax
+        ({
+            type: 'post',
+            url: "/shopcart/selectCart",
+            async: false,
+            serverSide: true,
+            dataType: 'json',
+            success: function (data) {
+                if(data == ''){
+                    $("#list").append("<h3 style='margin:0;font-size:100px;" +
+                        "font-family: \"Quicksand\",sans-serif;" +
+                        "font-weight: 500;color: #000;vertical-align: bottom;" +
+                        "text-align: center;'>没" +
+                        "<span style='color: red;'>数据</span></h3>");
+                    $("#list").append("<div class='clear'/>");
+                }
+                else {
+                    $("#list").empty();
+                    var table = $("<table style='padding-bottom: 50px;' class='table table-border table-bordered table-bg table-hover table-sort'/>");
+                    $("#list").append(table);
+                    table.append("<thead><tr  class='text-c'>" +
+                        "<th width='120'>宠物名</th>" +
+                        "<th>宠物图片</th>" +
+                        "<th width='60'>数量</th>" +
+                        "<th width='100'>价格</th>" +
+                        "<th width='100'>小计</th>" +
+                        "<th width='100'>操作</th>" +
+                        "</tr></thead>");
+                    var tbody = $("<tbody id='tbody' class='tbody'/>");
+                    var total = 0.0;
+                    $.each(data,function () {
+                        var tr = $("<tr/>");
+                        $("<td>" + this.pet.pet_name + "</td>").appendTo(tr);
+                        $("<td><img width='210' class='picture-thumb' src=' " + this.pet.pet_image + "'></td>").appendTo(tr);
+                        $("<td><input id='shop"+ this.pet.pet_id +"' type='number' " +
+                            "step='1' min='1' max='5' value='"+ this.num +
+                            "' onblur='updateItem("+this.pet.pet_id+")'></td>").appendTo(tr);
+                        $("<td>" + this.pet.selling_price + "元</td>").appendTo(tr);
+                        $("<td>" + (this.pet.selling_price*this.num) + "元</td>").appendTo(tr);
+                        $("<td class='td-manage'>" +
+                            "<a title='删除' href='javascript:;' onclick=\"shop_del(this," + this.pet.pet_id + ")\" class='ml-5' style='text-decoration:none'>" +
+                            "<i >X</i></a></td>").appendTo(tr);
+                        $(tbody).append(tr);
+                        total +=(this.pet.selling_price * this.num);
+                    });
+                    table.append(tbody);
+                    $("#span").append("<span style='font-size: 24px;font-weight: bold;'>合计（不含运费）："+ total +"</span>");
+
+                }
+            },
+            error: function () {
+                alert('操作失败！！！');
+            }
+
+        });
+    });
+    function updateItem(pet_id) {
+        var domId = 'shop' + pet_id;
+        var goodsCount = $("#" + domId).val();
+        if (goodsCount > 5) {
+            alert("商品最多添加5件")
+            window.location.reload();
+            return;
+        }
+        if (goodsCount < 1) {
+            alert("商品数量异常")
+            window.location.reload();
+            return;
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/shopcart/updatePetNum/'+ pet_id,
+            contentType: 'application/json',
+            data: JSON.stringify(goodsCount),
+            success: function (result) {
+                if (result == "success") {
+                    window.location.reload();
+                } else {
+                    alert("出现错误");
+                }
+            },
+            error: function () {
+                alert("异常");
+            }
+        });
+    }
+    function clearShop(){
+        layer.confirm('确认要清空购物车吗？', function (index) {
+            $.ajax({
+                type: "POST",
+                url: "/shopcart/clear",
+                success: function (result) {
+                    if (result == "success") {
+                        layer.msg('清空购物车成功',{icon:1,time:1000});
+                        setTimeout(function (){
+                            window.location.reload();
+                        },500);
+                    }
+                    else {
+                        layer.msg('清空购物车失败',{icon:5,time:1000});
+                    }
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+    function shop_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '/shopcart/deleteShop',
+                contentType: 'application/json',
+                data: JSON.stringify(id),
+                success: function (result) {
+                    if (result == "success") {
+                        layer.msg('已删除', {icon: 1, time: 1000});
+                        setTimeout(function (){
+                            window.location.reload();
+                        },1000)
+                    }
+                    else {
+                        layer.msg('删除失败', {icon: 5, time: 1000});
+                    }
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+    function settle(){
+        layer.confirm('确认要结算吗？', function (index) {
+            window.location.href = '/order/Ord';
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/front/common/header::head('宠物主页')"></head>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+    <div class="banner">
+        <div class="container">
+            <!--轮播图-->
+            <ul id="flexiselDemo3">
+            </ul>
+        </div>
+        <script type="text/javascript">
+            var size;
+            $(document).ready(function () {
+                $.ajax
+                ({
+                    type: 'post',
+                    url: "/selectRotation",
+                    async: false,
+                    serverSide: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        size = 0;
+                        $("#flexiselDemo3").empty();
+                        $.each(data, function () {
+                            $("#flexiselDemo3").append("" +
+                                "<li>\n" +
+                                "<div class=\"biseller-column\">\n" +
+                                "<a class=\"lightbox\" href=\"#" + this.id + "\">\n" +
+                                "<img src=\"" + this.images + "\"/>\n" +
+                                "</a>\n" +
+                                "<div class=\"lightbox-target\" id=\"" + this.id + "\">\n" +
+                                "<img src=\"" + this.images + "\"/>\n" +
+                                "<a class=\"lightbox-close\" href=\"#\"> </a>\n" +
+                                "<div class=\"clearfix\"></div>\n" +
+                                "</div>\n" +
+                                "</div>\n" +
+                                "</li>");
+                            size++;
+                        })
+                    },
+                    error: function () {
+                        alert('操作失败！！！');
+                    }
+                })
+            });
+            $(window).load(function () {
+                $("#flexiselDemo3").flexisel({
+                    visibleItems: size,
+                    animationSpeed: 1000,
+                    autoPlay: true,
+                    autoPlaySpeed: 3000,
+                    pauseOnHover: true,
+                    enableResponsiveBreakpoints: true,
+                    responsiveBreakpoints: {
+                        portrait: {
+                            changePoint: 480,
+                            visibleItems: size
+                        },
+                        landscape: {
+                            changePoint: 640,
+                            visibleItems: size
+                        },
+                        tablet: {
+                            changePoint: 768,
+                            visibleItems: size
+                        }
+                    }
+                });
+
+            });
+        </script>
+        <script type="text/javascript" src="/front/js/jquery.flexisel.js"></script>
+    </div>
+    <!--gallery-->
+    <div class="gallery">
+        <div class="container">
+            <div class="gallery-head">
+                <h3>Hot pet</h3>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;宠物（pet）指人们为了精神目的，而不是为了经济目的而豢养的生物。传统的宠物是指哺乳纲或鸟纲的动物，养着用于玩赏和作伴。实际生活中的宠物包括鱼纲、爬行纲、两栖纲、昆虫，甚至植物，用于观赏、作伴、舒缓人们的精神压力。
+                    随着时代的发展，宠物的范围很广，包括动物、植物、虚拟宠物、电子宠物等。但大多数国家的法律还是把宠物限定在动物范畴内。 饲养宠物作为人类亲近自然的机会，可以满足人类的心理需求，是非常健康正常的爱好。
+                </p>
+            </div>
+            <div class="portfolio-bottom">
+                <div class="gallery-one" id="hot-div">
+                    <div class="col-md-3 gallery-left" v-for="hp in hotpet">
+                        <a :href="'/detail/'+ hp.pet_id" class=" mask b-link-stripe b-animate-go   swipebox"
+                           title="Image Title">
+                            <img :src="hp.pet_image" :title="hp.pet_name" class="img-responsive zoom-img img"/>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--swipebox -->
+    <link rel="stylesheet" href="/front/css/swipebox.css">
+    <script src="/front/js/jquery.swipebox.min.js"></script>
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $(".swipebox").swipebox();
+        });
+    </script>
+    <script>
+        new Vue({
+            el: '#hot-div',
+            data: {
+                hotpet: ''
+            },
+            created() {
+                axios({
+                    url: '/selectPet',
+                    method: 'post'
+                }).then(res => {
+                    this.hotpet = res
+                    console.log(this.hotpet)
+                }).catch(err => {
+                    alert('操作失败！！！')
+                    console.log(err)
+                })
+            }
+        })
+    </script>
+    <div id="blog" class="blog">
+        <div class="blog-grids">
+            <div class="col-md-5 blog-grid-info">
+                <img src="/front/images/2.jpg" alt=""/>
+            </div>
+            <div class="col-md-3 blog-grid-info">
+                <div class="blog-grid-text">
+                    <a href="single.html"><h3>Lorem Ipsum is simply</h3></a>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
+                    <a class="read">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-4 blog-grid-info">
+                <img src="/front/images/3.jpg" alt=""/>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="blog-grids">
+            <div class="col-md-5 blog-grid-info">
+                <div class="blog-grid-text blg-text-two">
+                    <a href="single.html"><h3>Lorem Ipsum is simply</h3></a>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
+                    <a class="read">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-3 blog-grid-info">
+                <img src="/front/images/5.jpg" alt=""/>
+            </div>
+            <div class="col-md-4 blog-grid-info">
+                <div class="blog-grid-text blg-text-three">
+                    <a href="single.html"><h3>Lorem Ipsum is simply</h3></a>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
+                    <a class="read">Read More</a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div th:replace="/front/common/footer::footer"></div>
+</div>
+</body>
+</html>

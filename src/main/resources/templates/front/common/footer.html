@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="footer">
+    <!----family--->
+    <div class="c-family">
+        <div class="container">
+            <div class="family-top">
+                <h3>Pet Family !!</h3>
+                <p>We’re a group of people a lot like you – we love our dogs and cats and want to get them the best products and services that exist today! Sometimes it’s hard to find the best pet supplies or services and even when you find them they can be very expensive! We started FamilyPet to be your one stop for everything (and anything) pet related!</p>
+                <a class="read two">Read More</a>
+            </div>
+        </div>
+    </div>
+    <!---- footer --->
+    <div class="footer text-center">
+        <div class="container">
+            <div class="footer-grids">
+                <div class="col-md-6 footer-text">
+                    <h3>About Us</h3>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the
+                        industry's standard dummy text ever since, Lorem Ipsum has been the industry's standard dummy text
+                        ever since the 1500s.</p>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the
+                        industry's standard dummy text ever since, Lorem Ipsum has been the industry's standard dummy text
+                        ever since the 1500s.</p>
+                    <a class="read" >Read More</a>
+                </div>
+                <div class="col-md-6 footer-info">
+                    <h3>Get In Touch</h3>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the
+                        industry's standard dummy text ever since, </p>
+                    <div class="support">
+                        <input type="text" class="text" value="Enter email..." onFocus="this.value = '';"
+                               onBlur="if (this.value == 'Enter email...') {this.value = 'Enter email...';}">
+                        <input type="submit" value="SUBSCRIBE" class="botton">
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <!--start-smoth-scrolling-->
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({scrollTop: $(this.hash).offset().top}, 1000);
+            });
+        });
+    </script>
+    <a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover"
+                                                                             style="opacity: 1;"> </span></a>
+
+</div>

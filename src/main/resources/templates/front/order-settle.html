@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="/front/common/header::head('生成订单')"></head>
+<link href="/front/css/order-detail.css" rel='stylesheet' type='text/css'/>
+<script src="/front/js/jquery-2.1.4.min.js"></script>
+<script src="/front/js/bootstrap.min.js"></script>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+    <div class="banner two">
+        <div class="container">
+            <div class="pag-nav">
+                <ul class="p-list">
+                    <li><a href="/">主页</a></li> &nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span>我的</span>订单</li>&nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span>生成</span>订单</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- personal -->
+<div id="personal">
+    <div class="self-info center">
+
+        <!-- sidebar -->
+        <div th:replace="/front/common/personal-sidebar::personal-sidebar('order')"></div>
+
+        <div class="intro">
+            <div class="uc-box uc-main-box">
+                <div class="uc-content-box order-view-box">
+                    <div class="box-hd">
+                        <h1 class="title">填写并核对订单信息</h1>
+                        <div class="more clearfix">
+                            <div class="actions">
+                                <a id="saveOrder" class="btn btn-small btn-primary" title="提交订单">提交订单</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-bd">
+                        <div class="uc-order-item uc-order-item-pay">
+                            <div class="order-detail">
+
+                                <div class="order-summary">
+                                    <div class="order-progress">
+                                        <ol class="progress-list clearfix progress-list-5">
+                                            <li class="step step-done">
+                                                <div ><span class="text">购物车</span></div>
+                                                <div class="info"></div>
+                                            </li>
+                                            <li class="step step-active">
+                                                <div ><span class="text">下单</span></div>
+                                                <div class="info"></div>
+                                            </li>
+                                            <li class="step">
+                                                <div><span class="text">付款</span></div>
+                                                <div class="info"></div>
+                                            </li>
+                                            <li class="step">
+                                                <div><span class="text">出库</span></div>
+                                                <div class="info"></div>
+                                            </li>
+                                            <li class="step">
+                                                <div><span class="text">交易成功</span></div>
+                                                <div class="info"></div>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                <table class="order-items-table">
+                                    <tbody id="tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="editAddr" class="order-detail-info">
+                                <h3>收货信息</h3>
+                                <table class="info-table">
+                                    <tbody>
+                                    <tr id="tr">
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="actions">
+                                    <a class="btn btn-small btn-line-gray J_editAddr"
+                                       href="javascript:openUpdateModal();">修改</a>
+                                </div>
+                            </div>
+                            <div id="editTime" class="order-detail-info">
+                                <h3>支付方式</h3>
+                                <table class="info-table">
+                                    <tbody>
+                                    <tr>
+                                        <th>支付方式：</th>
+                                        <td>在线支付</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="actions">
+                                </div>
+                            </div>
+                            <div class="order-detail-total">
+                                <table class="total-table">
+                                    <tbody id="tbody2">
+                                    <tr>
+                                        <th>商品总价：</th>
+                                        <td id="td1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>运费：</th>
+                                        <td><span class="num">0</span>元</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="total">应付金额：</th>
+                                        <td class="total" id="td2">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="personalInfoModal" tabindex="-1" role="dialog"
+             aria-labelledby="personalInfoModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h6 class="modal-title" id="personalInfoModalLabel">地址修改</h6>
+                    </div>
+                    <div class="modal-body">
+                        <form id="personalInfoForm">
+                            <div class="form-group" id="divform">
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" id="saveButton">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div th:replace="/front/common/footer::footer"></div>
+<script type="text/javascript" src="/front/js/layer.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax
+        ({
+            type: 'post',
+            url: "/shopcart/selectCart",
+            async: false,
+            serverSide: true,
+            dataType: 'json',
+            success: function (data) {
+                $("#tbody").empty();
+                var price_sum = 0.0;
+                $.each(data,function () {
+                    var tr = $("<tr/>");
+                    $("<td class='col col-thumb'><div class='figure figure-thumb'>" +
+                        "<img src='"+ this.pet.pet_image +"'width='80' height='80'/></div></td>").appendTo(tr);
+                    $("<td class='col col-name' ><p class='name'style='margin: 5%;'>"+ this.pet.pet_name +"</p></td>").appendTo(tr);
+                    $("<td class='col col-price'><p class='price'>"+ this.pet.selling_price +"元 X "+ this.num +"</p>").appendTo(tr);
+                    $("<td class='col col-actions'></td>").appendTo(tr);
+                    $("#tbody").append(tr);
+                    price_sum +=(this.pet.selling_price * this.num);
+                });
+                $("#td1").empty();
+                $("#td2").empty();
+                $("#td1").append("<span class='num' >"+ price_sum +"元</span>");
+                $("#td2").append("<span class='num' >"+ price_sum +"元</span>");
+                $.ajax
+                ({
+                    type: 'post',
+                    url: "/user/user",
+                    async: false,
+                    serverSide: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#tr").empty();
+                        $("#tr").append("<th>收货地址：</th><td class='user_address_label'>"+ data.address +"</td>");
+                        $("#divform").append("<label for='address' class='control-label'>收货地址:</label>" +
+                            "<input type='text' class='form-control' id='address' name='address'" +
+                            "placeholder='请输入收货地址' value='"+ data.address +
+                            "' required='true'>")
+                    },
+                    error: function () {
+                        alert('操作失败1！！！');
+                    }
+                });
+            },
+            error: function () {
+                alert('操作失败2！！！');
+            }
+
+        });
+    });
+
+    function openUpdateModal() {
+        $('#personalInfoModal').modal('show');
+    }
+    $('#saveOrder').click(function () {
+        var address = $(".user_address_label").html();
+        if (address == '' || address == null) {
+            layer.msg('地址未填写', {icon: 5, time: 1000});
+            return;
+        }
+        if (address.trim().length < 10) {
+            layer.msg('请输入正确的收货信息', {icon: 5, time: 1000});
+            return;
+        }
+        $.ajax
+        ({
+            type: 'post',
+            url: "/order/createOrd",
+            success: function (data) {
+                if(data != "false"){
+                    layer.msg('提交成功', {icon: 1, time: 1000});
+                    setTimeout(function (){
+                        //返回到刚生成订单的页面
+                        window.location.href = "/order/ord/"+data;
+                    },1000);
+                }
+                else {
+                    layer.msg('提交失败', {icon: 5, time: 1000});
+                }
+            },
+            error: function () {
+                alert("异常");
+            }
+        });
+    });
+    //绑定modal上的保存按钮
+    $('#saveButton').click(function () {
+        var address = $("#address").val();
+        var user_id = $("#user_id").val();
+        var data = {
+            "user_id": user_id,
+            "address": address
+        };
+        $.ajax({
+            type: 'POST',//方法类型
+            url: '/user/ModifyADS',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result == "success") {
+                    layer.msg('修改成功', {icon: 1, time: 1000});
+                    $('#personalInfoModal').modal('hide');
+                    setTimeout(function (){
+                        window.location.reload();
+                    },1000);
+                } else {
+                    layer.msg('修改失败', {icon: 5, time: 1000});
+                    $('#personalInfoModal').modal('hide');
+                }
+            },
+            error: function () {
+                alert("异常");
+            }
+        });
+    });
+</script>
+</body>
+</html>

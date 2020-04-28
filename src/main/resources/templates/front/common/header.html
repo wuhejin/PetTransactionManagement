@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <title th:text="${title}">宠物交易系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content="Gato Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <link href="/front/css/bootstrap.css" rel='stylesheet' type='text/css'/>
+    <link href="/front/css/page.css" rel='stylesheet' type='text/css'/>
+    <!-- Custom Theme files -->
+    <link href="/front/css/style.css" rel='stylesheet' type='text/css'/>
+    <script src="/js/vue.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="/front/js/jquery.min.js"></script>
+    <style>
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            width: 100%;;
+        }
+
+        .dropdown-content li a {
+            z-index: 9999;
+            transform: skew(-25deg);
+            -webkit-transform: skew(-25deg);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .icon-search {
+            width: 100px;
+            text-indent: -10000px;
+            background: url(/front/images/search.png) no-repeat;
+            background-size: 50%;
+            background-position: center;
+            box-sizing: border-box;
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            text-align: center;
+            line-height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .selectpicker {
+            width: 70px;
+            height: 40px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            float: right;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+
+        .search {
+            text-align: center;
+            float: left;
+        }
+        .img{
+            width:250px;
+            height:200px;
+        }
+    </style>
+</head>
+<div class="header-bottom" th:fragment="header-bottom">
+    <div class="container" id="div">
+        <div class="logo">
+            <a href="/"><h1>宠<span>物</span></h1></a>
+        </div>
+        <span class="menu"></span>
+        <div class="top-menu">
+            <ul>
+                <nav>
+                    <li><a class="active" href="/">主页</a></li>
+                    <li><a href="/">关于我</a></li>
+                    <li class="dropdown">
+                        <a class="dropbtn">宠物类型 <span class="caret"></span></a>
+                        <ul class="dropdown-content">
+                            <li v-for="pt in pet_type">
+                                <a :href="'/search?pet_name=null&pet_type='+pt.id">
+                                    {{pt.type}}
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <shiro:user>
+                        <li class="dropdown">
+                            <a class="dropbtn">
+                                <shiro:principal property="username"/>
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-content">
+                                <li><a href="/user/person">个人中心</a></li>
+                                <li><a href="/order/my_order">我的订单</a></li>
+                                <li><a href="/logout">退出登录</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="/shopcart/selectCart">购物车(
+                                <th:block th:text="${session.shopcart}"></th:block>
+                                )</a>
+                        </li>
+                    </shiro:user>
+                    <shiro:guest>
+                        <li><a href="/user/log">登录</a></li>
+                    </shiro:guest>
+                    <!--<li><a href="portfolio.html">PORTFOLIO</a></li>-->
+                    <!--<li><a href="contact.html">Contact</a></li>-->
+                </nav>
+            </ul>
+        </div>
+        <div class="search">
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" id="name" class="form-control" placeholder="Search">
+                </div>
+                <button onclick="search()" type="button"
+                        class="btn btn-default icon-search">Submit
+                </button>
+                <select id="queryDevice" class="selectpicker"
+                        name="pet_type">
+                    <option data-tokens="ketchup mustard">------</option>
+                    <option name='pet_type' v-for="pt in pet_type" :value='pt.id'>
+                        {{pt.type}}
+                    </option>
+                </select>
+            </form>
+        </div>
+        <!-- script for menu -->
+        <script>
+            $("span.menu").click(function () {
+                $(".top-menu").slideToggle("slow", function () {
+                    // Animation complete.
+                });
+            });
+            $(function () {
+                $('#name').keypress(function (e) {
+                    var key = e.which; //e.which是按键的值
+                    if (key == 13) {
+                        var q = $(this).val();
+                        var f = $("select[name='pet_type']").val();
+                        if (f == "------")
+                            var f = null;
+                        if (q == "")
+                            q = null;
+                        window.location.href = '/search?pet_name=' + q + '&pet_type=' + f;
+                    }
+                });
+            });
+
+            function search() {
+                var q = $('#name').val();
+                if (q == "")
+                    q = null;
+                var f = $("select[name='pet_type']").val();
+                if (f == "------")
+                    var f = null;
+                window.location.href = '/search?pet_name=' + q + '&pet_type=' + f;
+            }
+        </script>
+        <script>
+            //响应拦截
+            axios.interceptors.response.use(res => {
+                //返回结果过滤，只取数据
+                return res.data;
+            }, err => {
+                return err;
+            })
+            new Vue({
+                el: '#div',
+                data: {
+                    pet_type: ''
+                },
+                created() {
+                    axios({
+                        url: '/selectType',
+                        method: 'post'
+                    }).then(res => {
+                        this.pet_type = res
+                    }).catch(err => {
+                        alert('操作失败！！！')
+                        console.log(err)
+                    })
+                }
+            })
+        </script>
+        <!-- script for menu -->
+        <div class="clearfix"></div>
+    </div>
+</div>
+

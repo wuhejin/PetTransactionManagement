@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="/front/common/header::head('订单详情')"></head>
+<link href="/front/css/order-detail.css" rel='stylesheet' type='text/css'/>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+    <div class="banner two">
+        <div class="container">
+            <div class="pag-nav">
+                <ul class="p-list">
+                    <li><a href="/">主页</a></li> &nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span>我的</span>订单</li>&nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span>订单</span>详情</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- personal -->
+<div id="personal">
+    <div class="self-info center">
+        <!-- sidebar -->
+        <div th:replace="/front/common/personal-sidebar::personal-sidebar('order')"></div>
+
+        <div class="intro">
+            <div class="uc-box uc-main-box">
+                <div class="uc-content-box order-view-box">
+                    <div class="box-hd">
+                        <h1 class="title">订单详情
+                            <small>请谨防钓鱼链接或诈骗电话，<a href="##">了解更多&gt;</a>
+                            </small>
+                        </h1>
+                        <div class="more clearfix">
+                            <h2 class="subtitle">订单号：
+                                <th:block th:text="${ord.ord_id}"></th:block>
+                                <span class="tag tag-subsidy"></span>
+                            </h2>
+                            <h2 class="subtitle">创建日期：
+                                <th:block th:text="${ord.create_time}"></th:block>
+                                <span class="tag tag-subsidy"></span>
+                            </h2>
+                            <div class="actions">
+                                <input type="hidden" id="orderNoValue" th:value="${ord.ord_id}">
+                                <input type="hidden" id="price_sum" th:value="${ord.price_sum}">
+                                <th:block th:if="${ord.status_ord>=0 && ord.status_ord < 3 && ord.status_pay == 1 }">
+                                    <a onclick="cancelOrder()"
+                                       class="btn btn-small btn-line-gray" title="退款">退款</a>
+                                </th:block>
+                                <th:block th:if="${ord.status_pay==0 && ord.status_ord == 0}">
+                                    <a onclick="payOrder()"
+                                       class="btn btn-small btn-primary" title="去支付">去支付</a>
+                                </th:block>
+                                <th:block th:if="${ord.status_pay==1 && ord.status_ord == 2}">
+                                    <a onclick="finishOrder()"
+                                       class="btn btn-small btn-primary" title="确认收货">确认收货</a>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-bd">
+                        <div class="uc-order-item uc-order-item-pay">
+                            <div class="order-detail">
+
+                                <div class="order-summary">
+                                    <div class="order-status">
+                                        <th:block th:if="${ord.status_ord==-1}">
+                                            订单被取消
+                                        </th:block>
+                                        <th:block th:if="${ord.status_ord==-3}">
+                                            订单被管理员退回
+                                        </th:block>
+                                        <th:block th:if="${ord.status_ord==-2}">
+                                            订单退款成功
+                                        </th:block>
+                                        <th:block th:if="${ord.status_pay==0 && ord.status_ord >=0}">
+                                            未支付
+                                        </th:block>
+                                        <th:block th:if="${ord.status_pay==1 && ord.status_ord >=0}">
+                                            已支付
+                                        </th:block>
+                                    </div>
+                                    <div class="order-desc">
+                                        <th:block th:if="${ord.status_pay==0 && ord.status_ord ==0}">请尽快完成支付哦~
+                                        </th:block>
+                                        <th:block th:if="${ord.status_pay==1 && ord.status_ord ==0}">订单确认中~
+                                        </th:block>
+                                        <th:block th:if="${ord.status_pay==1 && ord.status_ord ==1}">
+                                            仓库正在紧急配货中~
+                                        </th:block>
+                                        <th:block th:if="${ord.status_pay==1 && ord.status_ord ==2}">
+                                            订单已出库正在快马加鞭向您奔来~
+                                        </th:block>
+                                        <th:block th:if="${ord.status_pay==1 && ord.status_ord ==3}">
+                                            交易成功，感谢您对我们的支持~
+                                        </th:block>
+                                        <th:block th:if="${ord.status_ord<0}">交易已关闭~</th:block>
+
+                                    </div>
+                                    <th:block th:if="${ord.status_ord>=0}">
+                                        <div class="order-progress">
+                                            <ol class="progress-list clearfix progress-list-5">
+                                                <th:block th:if="${ord.status_pay == 0}">
+                                                    <li class="step step-active">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1}">
+                                                    <li class="step step-first">
+                                                </th:block>
+                                                <div ><span class="text">下单</span></div>
+                                                </li>
+                                                <th:block th:if="${ord.status_pay<1 && ord.status_ord == 0}">
+                                                    <li class="step">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1 && ord.status_ord<1}">
+                                                    <li class="step step-active">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1 && ord.status_ord>0}">
+                                                    <li class="step step-done">
+                                                </th:block>
+                                                <div ><span class="text">付款</span></div>
+                                                <div class="info"></div>
+                                                </li>
+                                                <th:block th:if="${ord.status_ord<1}">
+                                                    <li class="step">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1 && ord.status_ord==1}">
+                                                    <li class="step step-active">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1 && ord.status_ord>1}">
+                                                    <li class="step step-done">
+                                                </th:block>
+                                                <div ><span class="text">配货</span></div>
+                                                <div class="info"></div>
+                                                </li>
+                                                <th:block th:if="${ ord.status_ord<2}">
+                                                    <li class="step">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1 && ord.status_ord==2}">
+                                                    <li class="step step-active">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1 && ord.status_ord>2}">
+                                                    <li class="step step-done">
+                                                </th:block>
+                                                <div ><span class="text">出库</span></div>
+                                                <div class="info"></div>
+                                                </li>
+                                                <th:block th:if="${ord.status_ord<3}">
+                                                    <li class="step">
+                                                </th:block>
+                                                <th:block th:if="${ord.status_pay == 1 && ord.status_ord==3}">
+                                                    <li class="step step-last">
+                                                </th:block>
+                                                <div ><span class="text">交易成功</span></div>
+                                                <div class="info"></div>
+                                                </li>
+                                            </ol>
+                                        </div>
+                                    </th:block>
+                                </div>
+                                <table class="order-items-table">
+                                    <tbody>
+                                    <th:block th:each="item : ${ord.pets}">
+                                        <tr>
+                                            <td class="col col-thumb">
+                                                <div class="figure figure-thumb">
+                                                    <a target="_blank"
+                                                       th:href="@{'/detail/'+${item.pet_id}}">
+                                                        <img th:src="@{${item.pet_image}}"
+                                                             width="80" height="80" >
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td class="col col-name">
+                                                <p class="name">
+                                                    <a target="_blank"
+                                                       th:href="@{'/detail/'+${item.pet_id}}"
+                                                       th:text="${item.pet_name}" style='margin: 5%;'></a>
+                                                </p>
+                                            </td>
+                                            <td class="col col-price"><p class="price"
+                                                                         th:text="${item.selling_price+' x '+item.pet_num+'只'}"></p></td>
+                                            <td class="col col-actions">
+                                            </td>
+                                        </tr>
+                                    </th:block>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="editAddr" class="order-detail-info">
+                                <h3>收货信息</h3>
+                                <table class="info-table">
+                                    <tbody>
+                                    <tr>
+                                        <td th:text="${ord.shipaddress}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="actions">
+                                </div>
+                            </div>
+                            <div id="editTime" class="order-detail-info">
+                                <h3>支付方式</h3>
+                                <table class="info-table">
+                                    <tbody>
+                                    <tr>
+                                        <th>支付方式：</th>
+                                        <td>
+                                            在线支付
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="actions">
+                                </div>
+                            </div>
+                            <div class="order-detail-total">
+                                <table class="total-table">
+                                    <tbody>
+                                    <tr>
+                                        <th>运费：</th>
+                                        <td><span class="num">0</span>元</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="total">商品总价：</th>
+                                        <td class="total"><span class="num"
+                                                                th:text="${ord.price_sum}"></span>元
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div th:replace="/front/common/footer::footer"></div>
+<script type="text/javascript" src="/front/js/layer.js"></script>
+<script type="text/javascript">
+
+    function cancelOrder() {
+        var ord_id = $("#orderNoValue").val();
+        $.ajax({
+            type: 'POST',//方法类型
+            url: '/order/cancelOrder',
+            contentType: 'application/json',
+            data: JSON.stringify(ord_id),
+            success: function (result) {
+                if (result == "success") {
+                    layer.msg('退款成功', {icon: 1, time: 1000});
+                    setTimeout(function (){
+                        //返回到刚生成订单的页面
+                        window.location.href = "/order/ord/"+ord_id;
+                    },1000);
+                } else {
+                    layer.msg('退款失败', {icon: 5, time: 1000});
+                }
+            },
+            error: function () {
+                alert("退款异常");
+            }
+        });
+    }
+
+    function payOrder() {
+        var ord_id = $("#orderNoValue").val();
+        var price_sum = $("#price_sum").val();
+        window.location.href = '/order/pay/'+ord_id+"/"+price_sum;
+    }
+
+    function finishOrder() {
+        var ord_id = $("#orderNoValue").val();
+        $.ajax({
+            type: 'POST',
+            url: '/order/finishOrder',
+            contentType: 'application/json',
+            data: JSON.stringify(ord_id),
+            success: function (result) {
+                if (result == "success") {
+                    layer.msg('确认收货成功', {icon: 1, time: 1000});
+                    setTimeout(function (){
+                        //返回到刚生成订单的页面
+                        window.location.href = "/order/ord/"+ord_id;
+                    },1000);
+                } else {
+                    layer.msg('确认收货失败', {icon: 5, time: 1000});
+                }
+            },
+            error: function () {
+                alert("收货异常");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

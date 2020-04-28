@@ -1,0 +1,276 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="js/html5shiv.js"></script>
+    <script type="text/javascript" src="js/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="fonts/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="css/skin.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style1.css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="js/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <title>订单管理</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 订单管理 <span
+        class="c-gray en">&gt;</span> 订单管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+                                              href="javascript:location.replace(location.href);" title="刷新"><i
+        class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <div class="text-c"></div>
+    <div class="mt-20">
+        <table style="padding-bottom: 50px;" class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr class="text-c">
+                <th width="25"><input type="checkbox"></th>
+                <th width="80">ID</th>
+                <th width="100">订单号</th>
+                <th width="90">用户id</th>
+                <th width="40">总价</th>
+                <th width="70">支付状态</th>
+                <th width="70">订单状态</th>
+                <th width="80">宠物id X 数量</th>
+                <th width="">收货地址</th>
+                <th width="70">订单日期</th>
+                <th width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/layer.js"></script>
+<script type="text/javascript" src="js/H-ui.min.js"></script>
+<script type="text/javascript" src="js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="js/jquery.contextmenu.r2.js"></script>
+
+<script type="text/javascript" src="js/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="js/1.2/laypage.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax
+        ({
+            type: 'post',
+            url: "/admin/orderlist",
+            async: false,
+            serverSide: true,
+            dataType: 'json',
+            success: function (data) {
+                $("#tbody").empty();
+                $.each(data, test);
+            },
+            error: function () {
+                alert('操作失败！！！');
+            }
+
+        });
+    });
+
+    function test() {
+        var tr = $("<tr/>");
+        $("<td style='text-align:center'><input type='checkbox' name='checkbox' value='" + this.id + "' name=''></td>").appendTo(tr);
+        $("<td style='text-align:center'>" + this.id + "</td>").appendTo(tr);
+        $("<td style='text-align:center'>" + this.ord_id + "</td>").appendTo(tr);
+        $("<td style='text-align:center'>" + this.user_id + "</td>").appendTo(tr);
+        $("<td style='text-align:center'>" + this.price_sum + "</td>").appendTo(tr);
+        var str = "";
+        var str1 = "";
+        var str2 = "";
+        if (this.status_pay == 0) {
+            str = "未支付";
+            str1 = "label-defaunt";;
+        } else {
+            str = "已支付";
+            str1 = "label-success";;
+        }
+        $("<td style='text-align:center' class='td-status'><span class='label " + str1 + " radius'>" + str + "</span></td>").appendTo(tr);
+        if(this.status_ord == -3)
+            str2 = "管理员退回";
+        else if(this.status_ord == -2)
+            str2 = "用户退款";
+        else if (this.status_ord == -1)
+            str2 = "管理员取消";
+        else if (this.status_ord == 0)
+            str2 = "订单正常";
+        else if(this.status_ord == 1)
+            str2 = "已入库";
+        else if(this.status_ord == 2)
+            str2 = "已发货";
+        else
+            str2 = "交易完成";
+        $("<td style='text-align:center'>" + str2 + "</td>").appendTo(tr);
+        var td = $("<td style='text-align:center'/>");
+        $.each(this.pets,function () {
+            $("<p>"+this.pet_id+"X"+ this.pet_num +"只</p>").appendTo(td);
+        });
+        td.appendTo(tr);
+        $("<td style='text-align:center'>" + this.shipaddress + "</td>").appendTo(tr);
+        $("<td style='text-align:center'>" + this.create_time + "</td>").appendTo(tr);
+        var str3 = "<td class='td-manage' style='text-align:center'>";
+        if(this.status_pay == 1 && this.status_ord == 0)
+            str3 += "<a title='入库' href='javascript:;' onclick='warehou("+this.id+")'" +
+                    " class='ml-5' style='text-decoration:none'>" +
+                    "<i class='Hui-iconfont'>&#xe6de;</i></a> ";
+        else if(this.status_pay == 1 && this.status_ord == 1)
+            str3 += "<a title='发货' href='javascript:;' onclick='deliver("+this.id+")'" +
+                    " class='ml-5' style='text-decoration:none'>" +
+                    "<i class='Hui-iconfont'>&#xe6dc;</i></a> ";
+        if(this.status_ord != 3 && this.status_ord >= 0 && this.status_pay == 0)
+            str3 +="<a title='取消' href='javascript:;' onclick='cancelbyadmin(\""+ this.ord_id + "\","+ this.price_sum + ",0)' class='ml-5' style='text-decoration:none'>" +
+                "<i class='Hui-iconfont'>&#xe706;</i></a></td>";
+        if(this.status_ord != 3 && this.status_ord >= 0 && this.status_pay == 1)
+            str3 +="<a title='退回' href='javascript:;' onclick='cancelbyadmin(\""+ this.ord_id + "\","+ this.price_sum + ",1)' class='ml-5' style='text-decoration:none'>" +
+                "<i class='Hui-iconfont'>&#xe706;</i></a></td>";
+        $(str3).appendTo(tr);
+        $("#tbody").append(tr);
+    }
+
+    $(function () {
+        $('.table-sort').dataTable({
+            "aaSorting": [[1, "asc"]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {"orderable": false, "aTargets": [0, 10]}// 制定列不参与排序
+            ],
+            //显示条数
+            "lengthMenu": [ 5, 10, 25, 50, 75, 100],
+            //下方页面显示全部页数的第一页，最后一页，下一页，上一页
+            "pagingType": "full_numbers",
+        });
+
+    });
+
+    /*发货*/
+    function deliver(id) {
+        layer.confirm('确认发货？', function (index) {
+            var status_ord = 2;
+            var data = {
+                "id" : id,
+                "status_ord" : status_ord
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/admin/order',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result == "success") {
+                        layer.msg('已发货', {icon: 1, time: 1000});
+                        setTimeout(function (){
+                            //返回到刚生成订单的页面
+                            window.location.reload();
+                        },1000);
+                    }
+                    else {
+                        layer.msg('发货失败', {icon: 5, time: 1000});
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+            });
+        });
+    }
+
+    /*入库*/
+    function warehou(id) {
+        layer.confirm('确认入库？', function (index) {
+            var status_ord = 1;
+            var data = {
+                "id" : id,
+                "status_ord" : status_ord
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/admin/order',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result == "success") {
+                        layer.msg('已入库', {icon: 1, time: 1000});
+                        setTimeout(function (){
+                            //返回到刚生成订单的页面
+                            window.location.reload();
+                        },1000);
+                    }
+                    else {
+                        layer.msg('入库失败', {icon: 5, time: 1000});
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+            });
+        });
+    }
+
+
+
+    /*管理员取消*/
+    function cancelbyadmin( id,price_sum,i) {
+        var s,t,f,status_ord;
+        if(i == 0){
+            s = "确认取消订单吗？";
+            t = "已取消";
+            f = "取消失败";
+            status_ord = -1;
+        }
+        else {
+            s = "确认退回订单吗？";
+            t = "已退回";
+            f = "退回失败";
+            status_ord = -3;
+        }
+        console.log(id);
+        layer.confirm(s, function (index) {
+            var data = {
+                "ord_id" : id,
+                "price_sum":price_sum,
+                "status_ord" : status_ord
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/admin/order',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result == "success") {
+                        layer.msg(t, {icon: 1, time: 1000});
+                        setTimeout(function (){
+                            //返回到刚生成订单的页面
+                            window.location.reload();
+                        },1000);
+                    }
+                    else {
+                        layer.msg(f, {icon: 5, time: 1000});
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

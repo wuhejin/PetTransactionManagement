@@ -1,0 +1,109 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:fragment="head(title)">
+    <title th:text="${title}">宠物交易系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Play-Offs Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+    <script type="application/x-javascript"> addEventListener("load", function() {setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!meta charset utf="8">
+    <!--bootstrap-->
+    <link href="/admin/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!--coustom css-->
+    <link href="/admin/css/style.css" rel="stylesheet" type="text/css"/>
+    <!--script-->
+    <script src="/admin/js/jquery-2.1.4.min.js"></script>
+    <script src="/admin/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/admin/js/move-top.js"></script>
+    <script type="text/javascript" src="/admin/js/easing.js"></script><!--script-->
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $(".scroll").click(function(event){
+                event.preventDefault();
+                $('html,body').animate({scrollTop:$(this.hash).offset().top},900);
+            });
+        });
+    </script>
+    <style type="text/css">
+        .fr {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100%;
+            flex-grow: 1;
+            padding-bottom: 20px;
+        }
+        .fr .search {
+            position: relative;
+        }
+        .fr .search .text {
+            box-sizing: border-box;
+            width: 250px;
+            height: 50px;
+            border: 1px solid #ccc;
+            padding: 0 10px;
+        }
+        .fr .search .search_hot {
+            position: absolute;
+            top: 16px;
+            right: 12px;
+        }
+        .fr .button {
+            box-sizing: border-box;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            text-align: center;
+            line-height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .icon-search {
+            width: 100px;
+            text-indent: -10000px;
+            background: url(/static/admin/images/search.png) no-repeat;
+            background-size: 50%;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+<div class="col-md-6">
+    <h1 class="mrg" style="text-align: center;">管理员信息</h1>
+    <br>
+    <br>
+    <table class="table table-bordered">
+        <tbody>
+        <tr>
+            <td>姓名</td>
+            <td><shiro:principal property = "username"/></td>
+        </tr>
+        <tr>
+            <td><code>手机号</code></td>
+            <td><shiro:principal property = "tel"/></td>
+        </tr>
+        <tr>
+            <td><code>性别</code></td>
+            <td><shiro:principal property = "gender"/></td>
+        </tr>
+        <tr>
+            <td><code>出生日期</code></td>
+            <td><shiro:principal property = "age"/></td>
+        </tr>
+        <tr>
+            <td><code>创建日期</code></td>
+            <td><shiro:principal property = "create_time"/></td>
+        </tr>
+        <tr>
+            <td><code>权限</code></td>
+            <td shiro:hasPermission="user:*">拥有用户全部权限</td>
+            <td shiro:hasPermission="admin:*">拥有管理员全部权限</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

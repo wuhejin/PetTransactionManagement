@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="/front/common/header::head('个人信息')"></head>
+<link href="/front/css/personal.css" rel='stylesheet' type='text/css'/>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+    <div class="banner two">
+        <div class="container">
+            <div class="pag-nav">
+                <ul class="p-list">
+                    <li><a href="/">主页</a></li> &nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span>个人</span>信息</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- personal -->
+<div id="personal">
+    <div class="self-info center">
+
+        <!-- sidebar -->
+        <div th:replace="/front/common/personal-sidebar::personal-sidebar('personal')"></div>
+
+        <div class="intro">
+            <div class="grzlbt ml40">我的资料 <a href="javascript:;"
+                                             style="color:#1baeae;margin-left: 600px;">
+                <span onclick="person_update('更改个人信息','/user/User','','510')">更改个人信息</span></a>
+            </div>
+            <div class="info_item ml40"><span>昵称</span>
+                <span th:text="${user.username}"></span>
+            </div>
+            <div class="info_item ml40"><span>手机号</span>
+                <span th:text="${user.tel}"></span>
+            </div>
+            <div class="info_item ml40"><span>密码</span><span>******</span>
+            </div>
+            <div class="info_item ml40"><span>性别</span>
+                <span th:text="${user.gender}"></span>
+            </div>
+            <div class="info_item ml40"><span>出生日期</span>
+                <span th:text="${user.age} == null? '&nbsp;':${user.age}"></span>
+            </div>
+            <div class="info_item ml40"><span>个性签名</span>
+                <span th:text="${user.per_signature}== null? '&nbsp;':${user.per_signature}"></span>
+            </div>
+            <div class="info_item ml40"><span>收货信息</span>
+                <span th:text="${user.address}== null? '&nbsp;':${user.address}"></span>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div th:replace="/front/common/footer::footer"></div>
+<script type="text/javascript" src="/front/js/layer.js"></script>
+<script type="text/javascript">
+    function person_update(title, url ,w, h) {
+        if (title == null || title == '') {
+            title=false;
+        };
+        if (url == null || url == '') {
+            url="404.html";
+        };
+        if (w == null || w == '') {
+            w=800;
+        };
+        if (h == null || h == '') {
+            h=($(window).height() - 50);
+        };
+        layer.open({
+            type: 2,
+            area: [w+'px', h +'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade:0.4,
+            title: title,
+            content: url
+        });
+    }
+</script>
+</body>
+</html>

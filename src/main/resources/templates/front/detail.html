@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/front/common/header::head('宠物详情')"></head>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+
+    <div class="banner two">
+        <div class="container">
+            <div class="pag-nav">
+                <ul class="p-list">
+                    <li><a href="/">主页</a></li> &nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span th:text="${pet.pet_name}"></span>详情</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--error-->
+<div class="event-posts">
+    <div class="container">
+        <div class="single">
+            <div class="single-top">
+                <img th:src="${pet.pet_image}" alt=""/>
+            </div>
+            <div class="top-single">
+                <h2><span th:text="${pet.pet_name}"></span></h2>
+                <div class="grid-single">
+                    <div class="single-one"><span><i> </i>上架时间：<span th:text="${pet.upshelf_time}"></span></span></div>
+                    </li>
+                    <div class="single-one"><span><i class="com"> </i>10086</span></div>
+                    <div class="single-one"><span><i class="four"> </i>12580</span></div>
+                    <div class="clearfix"></div>
+                </div>
+                <p class="eget" th:text="${pet.pet_details}"></p>
+                <div class="single-middle">
+                    <ul class="social-share">
+                        <li><span>分享</span></li>
+                        <li><a ><i> </i></a></li>
+                        <li><a ><i class="tin"> </i></a></li>
+                        <li><a ><i class="message"> </i></a></li>
+                    </ul>
+                    <a ><i class="arrow"> </i></a>
+                    <div class="clearfix"></div>
+                </div>
+                <div>
+                    <div style="width:50%;font-size: 18px;margin-top: 40px;color:#1baeae;
+                    text-align:right;font-weight: bold;float: right;height: 200px;margin-bottom: 40px;">
+                        <th:block th:text="${pet.selling_price}+' 元'"></th:block>
+                        <del>
+                            <th:block th:text="${pet.selling_price}+' 元'"></th:block>
+                        </del>
+
+
+                        <div >
+                            <input style="height: 50px;width: 156px;border: none;
+                                   background: #1baeae;color: #fff;font-size: 18px;
+                                   cursor: pointer;margin-top: 40px;float: right;"
+                                   type="button" th:onclick="'saveToCart('+${pet.pet_id}+')'" value="加入购物车"/>
+                        </div>
+                    </div>
+                    <div style="float: left;width: 50%;height:200px;margin-bottom: 40px;text-align: left">
+                        <dl>
+                            <dt style="margin-left: 20px;">承诺</dt>
+                            <dd><a class="J_Cont" title="满足7天无理由退换货申请的前提下，包邮商品需要买家承担退货邮费，非包邮商品需要买家承担发货和退货邮费。" ><img src="/front/images/7d.jpg">7天无理由</a></dd>
+                        </dl>
+                        <dl>
+                            <dt style="margin-left: 20px;">支付</dt>
+                            <dd><a><img src="/front/images/hua.png">蚂蚁花呗</a><a><img
+                                    src="/front/images/card.png">zbf</a><a><img
+                                    src="/front/images/ji.png">集分宝</a></dd>
+                        </dl>
+                        <dl>
+                            <dt style="margin-left: 20px;">支持</dt>
+                            <dd>折旧变现，买新更省钱。<a style="float:none;text-decoration: underline;">详情</a></dd>
+                        </dl>
+
+                    </div>
+                </div>
+                <div class="top-comments">
+                    <h3>10 Comments</h3>
+                    <div class="met">
+                        <div class="code-in">
+                            <p class="smith"><a >Robert Smith</a> <span>05 march 2015, 15:20</span></p>
+                            <p class="reply"><a ><i> </i>REPLY</a></p>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="comments-top-top">
+                            <div class="men">
+                                <img src="images/men.png" alt="">
+                            </div>
+                            <p class="men-it">It is a long established fact that a reader will be distracted by the
+                                readable content of a page when looking at its layout.The point of using Lorem Ipsum is
+                                that it has a more-or-less </p>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="met met-in">
+                        <div class="code-in">
+                            <p class="smith"><a >Robert Smith</a> <span>02 april 2015, 15:20</span></p>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="comments-top-top top-in">
+                            <div class="men">
+                                <img src="images/men.png" alt="">
+                            </div>
+                            <p class="men-it">It is a long established fact that a reader will be distracted by the
+                                readable content of a page when looking at its layout.The point of using Lorem Ipsum is
+                                that it has a more-or-less </p>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="met">
+                        <div class="code-in">
+                            <p class="smith"><a >Robert Smith</a> <span>18 may 2015, 15:20</span></p>
+                            <p class="reply"><a ><i> </i>REPLY</a></p>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="comments-top-top">
+                            <div class="men">
+                                <img src="images/men.png" alt="">
+                            </div>
+                            <p class="men-it">It is a long established fact that a reader will be distracted by the
+                                readable content of a page when looking at its layout.The point of using Lorem Ipsum is
+                                that it has a more-or-less </p>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="leave">
+                    <h3>Leave a comment</h3>
+                    <form>
+                        <div class="single-grid">
+                            <div class="single-us">
+                                <input type="text" value="Name" onfocus="this.value='';"
+                                       onblur="if (this.value == '') {this.value = 'Name';}">
+                                <input type="text" value="E-mail" onfocus="this.value='';"
+                                       onblur="if (this.value == '') {this.value = 'E-mail';}">
+                                <textarea value=" " onfocus="this.value='';"
+                                          onblur="if (this.value == '') {this.value = 'Comment';}">Comment</textarea>
+                                <input type="submit" value="SEND">
+                            </div>
+                        </div>
+                    </form>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mattis semper nisl, vitae
+                        malesuada massa egestas a. Vestibulum vestibulum urna sapien, eu bibendum magna ornare non.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="/front/common/footer::footer"></div>
+<script type="text/javascript" src="/front/js/layer.js"></script>
+<script>
+    /**
+     * 添加到购物车
+     */
+    function saveToCart(id) {
+        var pet_id = id;
+        $.ajax({
+            type: 'POST',
+            url: '/shopcart/insertCart',
+            contentType: 'application/json',
+            data: JSON.stringify(pet_id),
+            success: function (result) {
+                if (result == "success") {
+                    layer.msg('加入购物车成功',{icon:1,time:1000});
+                    setTimeout(function (){
+                        window.location.reload();
+                    },1000);
+                } else if (result == "false") {
+                    layer.msg('加入购物车失败',{icon:5,time:1000});
+                }
+                else {
+                    layer.msg('未登录',{icon:5,time:1000});
+                    setTimeout(function (){
+                        window.open("/user/log", '_self');
+                    },1000);
+                }
+            },
+            error: function () {
+                alert("异常");
+            }
+        });
+    }
+</script>
+</body>
+</html>

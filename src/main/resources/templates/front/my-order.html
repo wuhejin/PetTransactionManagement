@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="/front/common/header::head('我的订单')"></head>
+<link href="/front/css/my-orders.css" rel='stylesheet' type='text/css'/>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+    <div class="banner two">
+        <div class="container">
+            <div class="pag-nav">
+                <ul class="p-list">
+                    <li><a href="/">主页</a></li> &nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp; <span>我的</span>订单</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- personal -->
+<div id="personal">
+    <div class="self-info center">
+
+        <!-- sidebar -->
+        <div th:replace="/front/common/personal-sidebar::personal-sidebar('order')"></div>
+
+        <div class="intro">
+            <div class="uc-box uc-main-box">
+                <div class="uc-content-box order-list-box">
+                    <div class="box-hd">
+                        <h1 class="title">我的订单
+                            <small>请谨防钓鱼链接或诈骗电话，<a >了解更多&gt;</a>
+                            </small>
+                        </h1>
+                    </div>
+                    <div class="box-bd" id="ordlist">
+                        <div id="J_orderList">
+                            <!---->
+                            <ul class='order-list' v-for="(ord,index) in ordList">
+                                <li class='uc-order-item uc-order-item-list' v-if="index >= pagesize*(pagenum-1) && index < pagesize*pagenum">
+                                    <div class='order-detail'>
+                                        <div class='order-summary'>
+                                            <div v-if="ord.status_ord < 0" class='order-status-closed'>订单取消</div>
+                                            <div v-else-if="ord.status_ord == 0 && ord.status_pay == 0" class='order-status-need-pay'>未支付</div>
+                                            <div v-else class='order-status-success'>已支付</div>
+                                        </div>
+                                        <table class='order-detail-table'>
+                                            <thead>
+                                                <tr>
+                                                    <th class='col-main'>订单号：<a >{{ord.ord_id}}</a><span class='sep'>|</span>在线支付<span class='sep'>|</span>创建日期:<a>{{ord.create_time}}</a></th>
+                                                    <th class='col-sub'><p class='caption-price'>应付金额：<span class='num'>{{ord.price_sum}}</span>元</p></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class='order-items'>
+                                                        <ul class='goods-list'>
+                                                            <li v-for="p in ord.pets">
+                                                                <div class='figure figure-thumb'>
+                                                                    <a target='_blank' :href="'/detail/'+p.pet_id ">
+                                                                        <img :src="p.pet_image" width='80' height='80' >
+                                                                    </a>
+                                                                    <p class='name'><a target='_blank' :href="'/detail/'+p.pet_id ">{{p.pet_name}}</a></p>
+                                                                    <p class='price'>{{p.selling_price}} × {{p.pet_num}}只</p>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                    <td class='order-actions'>
+                                                        <a class='btn btn-small btn-line-gray' :href="'/order/ord/'+ ord.ord_id">订单详情</a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="page-bar" style="margin: 0" v-if="ordList.length != 0">
+                            <ul style="padding-left: 25%;width: 100%;float: left;">
+                                <li>
+                                    <button d @click="decrement" :disabled="pagenum <= 1" :class="{'banclick':pagenum <= 1}">上一页</button>
+                                </li>
+                                <li v-for="count in maxpage" :class="{ 'active': pagenum == count}">
+                                    <button @click="jump(count)" :disabled="pagenum == count">{{ count }}</button>
+                                </li>
+                                <li>
+                                    <button @click="increment" :disabled="pagenum >= maxpage" :class="{ 'banclick': pagenum >= maxpage}">
+                                        下一页
+                                    </button>
+                                </li>
+                                <li>
+                                    <button>共<i>{{maxpage}}</i>页</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div th:replace="/front/common/footer::footer"></div>
+<script type="text/javascript" src="/front/js/layer.js"></script>
+<script>
+    new Vue({
+        el: '#ordlist',
+        data: {
+            ordList: '',
+            pagenum: 1,
+            pagesize: 3
+        },
+        created() {
+            axios({
+                url: '/order/selectAll',
+                method: 'post'
+            }).then(res => {
+                this.ordList = res
+                console.log(this.ordList);
+            }).catch(err => {
+                alert('操作失败！！！')
+                console.log(err)
+            })
+        },
+        methods: {
+            increment() {
+                this.pagenum++;
+            },
+            decrement() {
+                this.pagenum--;
+            },
+            jump(count) {
+                this.pagenum = count;
+            }
+        },
+        computed: {
+            maxpage() {
+                return Math.ceil(this.ordList.length / this.pagesize) || 1
+            }
+        }
+    })
+</script>
+</body>
+</html>

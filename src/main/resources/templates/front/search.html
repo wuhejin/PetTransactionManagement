@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/front/common/header::head('宠物列表')"></head>
+<body>
+<!--start-home-->
+<div id="home" class="header">
+    <div th:replace="/front/common/header::header-bottom"></div>
+
+    <div class="banner two">
+        <div class="container">
+            <div class="pag-nav">
+                <ul class="p-list">
+                    <li><a href="/">主页</a></li> &nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp;宠物列表</li>&nbsp;&nbsp;/&nbsp;
+                    <li class="act">&nbsp;搜索 "<span th:text="${pet_name}==null?'':${pet_name}"></span>"</li>
+                </ul>
+            </div>
+            <input type="hidden" name="pet_type" id="pet_type"
+                   th:value="${#httpServletRequest.getParameter('pet_type')}">
+            <input type="hidden" name="pet_name" id="pet_name"
+                   th:value="${#httpServletRequest.getParameter('pet_name')}">
+        </div>
+    </div>
+</div>
+</div>
+<!--gallery-->
+<div class="gallery services" id="body">
+
+    <div class="container">
+        <div class="port-head">
+            <h3>宠物列表</h3>
+        </div>
+        <div class="portfolio-bottom" style="text-align: -webkit-center;" v-if="pet.length != 0">
+            <div class="gallery-one two"  v-for="(p,index) in pet">
+                <div class="col-md-3 gallery-left two" v-if="index >= pagesize*(pagenum-1) && index < pagesize*pagenum">
+                    <a :href="'/detail/'+p.pet_id" class=" mask b-link-stripe b-animate-go   swipebox"
+                       title="Image Title" target="_blank">
+                        <img :src="p.pet_image" :title="p.pet_name" style="width: 90%;height: 200px;"
+                             class="img-responsive zoom-img"/>
+                        <p>{{p.pet_name}}</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="page-bar">
+                <ul style="padding-left: 35%;width: 100%;float: left;">
+                    <li>
+                        <button d @click="decrement" :disabled="pagenum <= 1" :class="{'banclick':pagenum <= 1}">上一页</button>
+                    </li>
+                    <li v-for="count in maxpage" :class="{ 'active': pagenum == count}">
+                        <button @click="jump(count)" :disabled="pagenum == count">{{ count }}</button>
+                    </li>
+                    <li>
+                        <button @click="increment" :disabled="pagenum >= maxpage" :class="{ 'banclick': pagenum >= maxpage}">
+                            下一页
+                        </button>
+                    </li>
+                    <li>
+                        <button>共<i>{{maxpage}}</i>页</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="portfolio-bottom" style="text-align: -webkit-center;font-size: 5em;
+                font-weight: 400;color: #d88f72bf;font-family: 'Cinzel Decorative';" v-else>
+            找不到宠物
+        </div>
+    </div>
+</div>
+<!--swipebox -->
+<link rel="stylesheet" href="/front/css/swipebox.css">
+<script src="/front/js/jquery.swipebox.min.js"></script>
+<script type="text/javascript">
+    jQuery(function ($) {
+        $(".swipebox").swipebox();
+    });
+</script>
+<div th:replace="/front/common/footer::footer"></div>
+<script type="text/javascript">
+    var pet_name = $("#pet_name").val();
+    var pet_type = $("#pet_type").val();
+    if (pet_name == "null" || pet_name == "")
+        pet_name = null;
+    if (pet_type == "null" || pet_type == "")
+        pet_type = null;
+    const test = new Vue({
+        el: '#body',
+        data: {
+            pet: '',
+            pagenum: 1,
+            pagesize: 16
+        },
+        created() {
+            axios({
+                url: '/search',
+                method: 'post',
+                data: {
+                    pet_name: pet_name,
+                    pet_type: pet_type
+                }
+            }).then(res => {
+                this.pet = res;
+                console.log(this.pet)
+            }).catch(err => {
+                alert('操作失败！！！')
+                console.log(err)
+            })
+        },
+        methods: {
+            increment() {
+                this.pagenum++;
+            },
+            decrement() {
+                this.pagenum--;
+            },
+            jump(count) {
+                this.pagenum = count;
+            }
+        },
+        computed: {
+            maxpage() {
+                return Math.ceil(this.pet.length / this.pagesize) || 1
+            }
+        }
+    })
+</script>
+</body>
+</html>
